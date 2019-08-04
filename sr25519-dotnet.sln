@@ -1,0 +1,31 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 16
+VisualStudioVersion = 16.0.29123.88
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "sr25519-dotnet.lib", "sr25519-dotnet.lib\sr25519-dotnet.lib.csproj", "{94D76CE4-B329-4089-975C-3427321A4BAF}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "sr25519-dotnet.test", "sr25519-dotnet.test\sr25519-dotnet.test.csproj", "{0806B2DF-AB64-4FDE-A378-DCE7408BD839}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{94D76CE4-B329-4089-975C-3427321A4BAF}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{94D76CE4-B329-4089-975C-3427321A4BAF}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{94D76CE4-B329-4089-975C-3427321A4BAF}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{94D76CE4-B329-4089-975C-3427321A4BAF}.Release|Any CPU.Build.0 = Release|Any CPU
+		{0806B2DF-AB64-4FDE-A378-DCE7408BD839}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{0806B2DF-AB64-4FDE-A378-DCE7408BD839}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{0806B2DF-AB64-4FDE-A378-DCE7408BD839}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{0806B2DF-AB64-4FDE-A378-DCE7408BD839}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {5FB038BC-5EB5-443D-A347-0EBF3AA7F8C6}
+	EndGlobalSection
+EndGlobal
