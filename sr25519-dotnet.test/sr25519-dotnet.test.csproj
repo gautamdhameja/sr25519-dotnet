@@ -5,6 +5,8 @@
     <RootNamespace>sr25519_dotnet.test</RootNamespace>
 
     <IsPackable>false</IsPackable>
+
+    <Platforms>AnyCPU;x64</Platforms>
   </PropertyGroup>
 
   <ItemGroup>

@@ -20,7 +20,7 @@ namespace sr25519_dotnet.lib
             byte[] seedBytes = Utils.HexStringToByteArray(seedHex);
 
             var keys = new byte[Constants.SR25519_KEYPAIR_SIZE];
-            Bindings.sr25519_keypair_from_seed(keys, seedBytes);
+            Bindings.KeypairFromSeed(keys, seedBytes);
 
             var keypair = new SR25519Keypair();
             keypair.Secret = new byte[Constants.SR25519_SECRET_SIZE];
@@ -42,7 +42,7 @@ namespace sr25519_dotnet.lib
             var bytes = Encoding.UTF8.GetBytes(message);
             var signature = new byte[Constants.SR25519_SIGNATURE_SIZE];
 
-            Bindings.sr25519_sign(
+            Bindings.Sign(
                 signature, keypair.Public, 
                 keypair.Secret, bytes, Convert.ToUInt64(bytes.Length));
 
@@ -63,7 +63,7 @@ namespace sr25519_dotnet.lib
             try
             {
                 var bytes = Encoding.UTF8.GetBytes(message);
-                result = Bindings.sr25519_verify(
+                result = Bindings.Verify(
                     signature, bytes, Convert.ToUInt64(bytes.Length), 
                     publicKey);
             }
