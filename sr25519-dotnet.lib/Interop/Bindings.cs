@@ -1,28 +1,13 @@
-﻿using System.Runtime.InteropServices;
+﻿using System;
+using System.Runtime.InteropServices;
 
 namespace sr25519_dotnet.lib.Interop
 {
     /// <summary>
-    /// The P/Invoke bindings for the sr25519crust dll generated from Rust code.
+    /// The P/Invoke bindings for the sr25519crust dll, generated from Rust code.
     /// </summary>
     internal sealed class Bindings
     {
-        /// <summary>
-        /// The result enum.
-        /// Mapping to the same enum in https://github.com/Warchant/sr25519-crust
-        /// </summary>
-        internal enum Sr25519SignatureResult : uint
-        {
-            Ok,
-            EquationFalse,
-            PointDecompressionError,
-            ScalarFormatError,
-            BytesLengthError,
-            NotMarkedSchnorrkel,
-            MuSigAbsent,
-            MuSigInconsistent,
-        }
-
         /// <summary>
         /// Perform a hard derivation on a secret.
         /// </summary>
@@ -114,53 +99,5 @@ namespace sr25519_dotnet.lib.Interop
         internal static extern bool Verify(
             byte[] signature_ptr, byte[] message_ptr,
             ulong message_length, byte[] public_ptr);
-
-        /// <summary>
-        /// The Vrf result
-        /// </summary>
-        [StructLayout(LayoutKind.Sequential)]
-        internal struct VrfSignResult
-        {
-            public Sr25519SignatureResult result;
-            public bool is_less;
-        }
-
-        /// <summary>
-        /// Sign the provided message using a Verifiable Random Function.
-        /// </summary>
-        /// <param name="out_and_proof_ptr">VRF out and proof.</param>
-        /// <param name="keypair_ptr">Keypair.</param>
-        /// <param name="message_ptr">Message.</param>
-        /// <param name="message_length">Message length.</param>
-        /// <param name="limit_ptr">Limit.</param>
-        /// <returns></returns>
-        [DllImport("sr25519crust",
-            CallingConvention = CallingConvention.Cdecl,
-            ExactSpelling = true,
-            EntryPoint = "sr25519_vrf_sign_if_less",
-            SetLastError = true)]
-        internal static extern VrfSignResult VrfSign(
-            [Out] byte[] out_and_proof_ptr,
-            byte[] keypair_ptr, byte[] message_ptr,
-            ulong message_length, byte[] limit_ptr);
-
-        /// <summary>
-        /// Verify a signature produced by a VRF with its original input and the corresponding proof.
-        /// </summary>
-        /// <param name="public_key_ptr">Public key.</param>
-        /// <param name="message_ptr">Message.</param>
-        /// <param name="message_length">Message length.</param>
-        /// <param name="output_ptr">Output.</param>
-        /// <param name="proof_ptr">Proof.</param>
-        /// <returns></returns>
-        [DllImport("sr25519crust",
-            CallingConvention = CallingConvention.Cdecl,
-            ExactSpelling = true,
-            EntryPoint = "sr25519_vrf_verify",
-            SetLastError = true)]
-        internal static extern Sr25519SignatureResult VrfVerify(
-            byte[] public_key_ptr, byte[] message_ptr,
-            ulong message_length, byte[] output_ptr,
-            byte[] proof_ptr);
     }
 }

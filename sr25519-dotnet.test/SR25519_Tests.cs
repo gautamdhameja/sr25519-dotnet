@@ -1,5 +1,6 @@
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using sr25519_dotnet.lib;
+using System;
 
 namespace sr25519_dotnet.test
 {
@@ -23,6 +24,22 @@ namespace sr25519_dotnet.test
             // Assert.
             Assert.IsTrue(verification1);
             Assert.IsFalse(verification2);
+        }
+
+        [TestMethod]
+        public void ShouldHardDeriveKeypair()
+        {
+            // Arrange.
+            var keys = SR25519.GenerateKeypairFromSeed(
+                "fac7959dbfe72f052e5a0c3c8d6530f202b02fd8f9f5ca3580ec8deb7797479e");
+            var cc = "14416c6963650000000000000000000000000000000000000000000000000000"; // Alice
+            var expected_public = "d43593c715fdd31c61141abd04a99fd6822c8558854ccde39a5684e7a56da27d";
+
+            // Act.
+            var derived = SR25519.HardDeriveKeypair(keys, cc);
+
+            // Assert.
+            Assert.AreEqual(expected_public, Utils.ByteArrayToHexString(derived.Public));
         }
     }
 }

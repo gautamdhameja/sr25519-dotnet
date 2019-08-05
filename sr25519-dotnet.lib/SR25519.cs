@@ -2,6 +2,7 @@
 using System;
 using sr25519_dotnet.lib.Interop;
 using System.Text;
+using sr25519_dotnet.lib.Exceptions;
 
 namespace sr25519_dotnet.lib
 {
@@ -22,13 +23,29 @@ namespace sr25519_dotnet.lib
             var keys = new byte[Constants.SR25519_KEYPAIR_SIZE];
             Bindings.KeypairFromSeed(keys, seedBytes);
 
-            var keypair = new SR25519Keypair();
-            keypair.Secret = new byte[Constants.SR25519_SECRET_SIZE];
-            keypair.Public = new byte[Constants.SR25519_PUBLIC_SIZE];
-            Buffer.BlockCopy(keys, 0, keypair.Secret, 0, 64);
-            Buffer.BlockCopy(keys, 64, keypair.Public, 0, 32);
+            return new SR25519Keypair(keys);
+        }
 
-            return keypair;
+        /// <summary>
+        /// Hard derive a new keypair from an existing keypair.
+        /// </summary>
+        /// <param name="keypair">Input keypair.</param>
+        /// <param name="chainCode">The chain code as hex string.</param>
+        /// <returns>SR25519Keypair</returns>
+        public static SR25519Keypair HardDeriveKeypair(SR25519Keypair keypair, string chainCodeHex)
+        {
+            byte[] chainCodeBytes = Utils.HexStringToByteArray(chainCodeHex);
+
+            if (chainCodeBytes.Length != Constants.SR25519_CHAINCODE_SIZE)
+            {
+                throw new SR25519KeypairException(StringConstants.BadChaincodeSizeMessage);
+            }
+
+            var bytes = keypair.GetBytes();
+            var derived = new byte[96];
+            Bindings.DeriveKeypairHard(derived, bytes, chainCodeBytes);
+
+            return new SR25519Keypair(derived);
         }
 
         /// <summary>
