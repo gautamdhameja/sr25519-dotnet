@@ -30,7 +30,7 @@ namespace sr25519_dotnet.lib
         /// Hard derive a new keypair from an existing keypair.
         /// </summary>
         /// <param name="keypair">Input keypair.</param>
-        /// <param name="chainCode">The chain code as hex string.</param>
+        /// <param name="chainCode">Chain code as hex string.</param>
         /// <returns>SR25519Keypair</returns>
         public static SR25519Keypair HardDeriveKeypair(SR25519Keypair keypair, string chainCodeHex)
         {
@@ -42,10 +42,70 @@ namespace sr25519_dotnet.lib
             }
 
             var bytes = keypair.GetBytes();
-            var derived = new byte[96];
+            var derived = new byte[Constants.SR25519_KEYPAIR_SIZE];
             Bindings.DeriveKeypairHard(derived, bytes, chainCodeBytes);
 
             return new SR25519Keypair(derived);
+        }
+
+        /// <summary>
+        /// Soft derive a new keypair from an existing keypair.
+        /// </summary>
+        /// <param name="keypair">Input keypair.</param>
+        /// <param name="chainCodeHex">Chain code as hex string.</param>
+        /// <returns>SR25519Keypair</returns>
+        public static SR25519Keypair SoftDeriveKeypair(SR25519Keypair keypair, string chainCodeHex)
+        {
+            byte[] chainCodeBytes = Utils.HexStringToByteArray(chainCodeHex);
+
+            if (chainCodeBytes.Length != Constants.SR25519_CHAINCODE_SIZE)
+            {
+                throw new SR25519KeypairException(StringConstants.BadChaincodeSizeMessage);
+            }
+
+            var bytes = keypair.GetBytes();
+            var derived = new byte[Constants.SR25519_KEYPAIR_SIZE];
+            Bindings.DeriveKeypairSoft(derived, bytes, chainCodeBytes);
+
+            return new SR25519Keypair(derived);
+        }
+
+        /// <summary>
+        /// Perform a derivation on a publicKey.
+        /// </summary>
+        /// <param name="publicKeyHex">Input public key as hex string.</param>
+        /// <param name="chainCodeHex">Chain code as hex string.</param>
+        /// <returns></returns>
+        public static byte[] SoftDerivePublicKey(string publicKeyHex, string chainCodeHex)
+        {
+            var bytes = Utils.HexStringToByteArray(publicKeyHex);
+            return SoftDerivePublicKey(bytes, chainCodeHex);
+        }
+
+        /// <summary>
+        /// Perform a derivation on a publicKey.
+        /// </summary>
+        /// <param name="publicKey">Input public key as byte[].</param>
+        /// <param name="chainCodeHex">Chain code as hex string.</param>
+        /// <returns>byte[] public key</returns>
+        public static byte[] SoftDerivePublicKey(byte[] publicKey, string chainCodeHex)
+        {
+            byte[] chainCodeBytes = Utils.HexStringToByteArray(chainCodeHex);
+
+            if (chainCodeBytes?.Length != Constants.SR25519_CHAINCODE_SIZE)
+            {
+                throw new SR25519KeypairException(StringConstants.BadChaincodeSizeMessage);
+            }
+
+            if (publicKey?.Length != Constants.SR25519_PUBLIC_SIZE)
+            {
+                throw new SR25519KeypairException(StringConstants.BadKeySizeMessage);
+            }
+
+            var derived = new byte[Constants.SR25519_PUBLIC_SIZE];
+            Bindings.DerivePublicSoft(derived, publicKey, chainCodeBytes);
+
+            return derived;
         }
 
         /// <summary>

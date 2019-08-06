@@ -96,6 +96,7 @@ namespace sr25519_dotnet.lib.Interop
             ExactSpelling = true,
             EntryPoint = "sr25519_verify",
             SetLastError = true)]
+        [return: MarshalAs(UnmanagedType.U1)]
         internal static extern bool Verify(
             byte[] signature_ptr, byte[] message_ptr,
             ulong message_length, byte[] public_ptr);
