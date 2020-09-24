@@ -116,7 +116,9 @@ namespace sr25519_dotnet.lib
         /// <returns>Signature as byte[]</returns>
         public static byte[] Sign(string message, SR25519Keypair keypair)
         {
-            var bytes = Encoding.UTF8.GetBytes(message);
+            var bytes = message.StartsWith("0x", StringComparison.InvariantCultureIgnoreCase) ?
+                Utils.HexStringToByteArray(message.Substring(2)) : Encoding.UTF8.GetBytes(message);
+
             var signature = new byte[Constants.SR25519_SIGNATURE_SIZE];
 
             Bindings.Sign(
@@ -139,7 +141,9 @@ namespace sr25519_dotnet.lib
             bool result;
             try
             {
-                var bytes = Encoding.UTF8.GetBytes(message);
+                var bytes = message.StartsWith("0x", StringComparison.InvariantCultureIgnoreCase) ?
+                    Utils.HexStringToByteArray(message.Substring(2)) : Encoding.UTF8.GetBytes(message);
+
                 result = Bindings.Verify(
                     signature, bytes, Convert.ToUInt64(bytes.Length), 
                     publicKey);
