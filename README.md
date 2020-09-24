@@ -6,7 +6,7 @@ The underlying Rust code compiled into `dll` is from the SR26619 C bindings [htt
 
 Well, yeah, we can call these bindings on bindings. :-)
 
-The current code uses release build (dll) on x64 platforms from the C bindings compatible with version 0.1.1 of schnorrkel.
+The current code uses release builds on various platforms from the C bindings compatible with version v0.9.1 of schnorrkel (builds from master https://github.com/Warchant/sr25519-crust/commit/ddbabcd12cbe60a7921e280ad93476faf4d4212a).
 
 Test data used here is the same as that in the [C bindings](https://github.com/Warchant/sr25519-crust) to ensure things are working as expected.
 
@@ -25,11 +25,14 @@ Check the [tests](./sr25519-dotnet.test/SR25519_Tests.cs) for more examples.
 
 At the moment, these bindings don't include VRF signing and verification functions.
 
-The `dll` dependency is also only included for a single platform (x64).
+The native lib dependency is also provided for various platforms in the `/native/libs` folder:
+- Windows 64-bit (MSVC)
+- MaxOS 64-bit
+- Android (Linux) ARMv8 & x86_64
 
 ## To Do
 
-* Update to latest version of schnorrkel when C bindings are updated.
+* ~~Update to latest version of schnorrkel when C bindings are updated.~~
 * Add bindings for VRF related functions.
 * Automate build process.
 * Publish as a nuget package.
