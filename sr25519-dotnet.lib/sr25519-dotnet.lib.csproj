@@ -6,14 +6,4 @@
     <Platforms>AnyCPU;x64</Platforms>
   </PropertyGroup>
 
-  <ItemGroup>
-    <None Remove="sr25519crust.dll" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <EmbeddedResource Include="sr25519crust.dll">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </EmbeddedResource>
-  </ItemGroup>
-
 </Project>
