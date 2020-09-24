@@ -29,6 +29,7 @@ The native lib dependency is also provided for various platforms in the `/native
 - Windows 64-bit (MSVC)
 - MaxOS 64-bit
 - Android (Linux) ARMv8 & x86_64
+- Linux x86_64
 
 ## To Do
 
