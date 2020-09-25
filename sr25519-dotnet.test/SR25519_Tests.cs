@@ -21,7 +21,7 @@ namespace sr25519_dotnet.test
         }
 
         [TestMethod]
-        public void ShouldSignAndVerify()
+        public void ShouldSignAndVerifyMessageString()
         {
             // Arrange.
             var message1 = "positive test message";
@@ -33,6 +33,26 @@ namespace sr25519_dotnet.test
             var sig = SR25519.Sign(message1, keys);
             var verification1 = SR25519.Verify(message1, sig, keys.Public);
             var verification2 = SR25519.Verify(message2, sig, keys.Public);
+
+            // Assert.
+            Assert.IsTrue(verification1);
+            Assert.IsFalse(verification2);
+        }
+
+        [TestMethod]
+        public void ShouldSignAndVerifyMessageBytes()
+        {
+            // Arrange.
+            var message1 = "010203040506070809";
+            var message2 = "090807060504030201";
+
+            // Act.
+            var keys = SR25519.GenerateKeypairFromSeed(
+                 "f6dbe0604959f8d4f53ef58754f44391c69cfc87f1b97872abef63161e18c885");
+            var sig = SR25519.Sign(Utils.HexStringToByteArray(message1), keys);
+
+            var verification1 = SR25519.Verify(Utils.HexStringToByteArray(message1), sig, keys.Public);
+            var verification2 = SR25519.Verify(Utils.HexStringToByteArray(message2), sig, keys.Public);
 
             // Assert.
             Assert.IsTrue(verification1);
