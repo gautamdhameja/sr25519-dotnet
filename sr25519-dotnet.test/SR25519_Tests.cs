@@ -29,9 +29,8 @@ namespace sr25519_dotnet.test
 
             // Act.
             var keys = SR25519.GenerateKeypairFromSeed(
-                 "f6dbe0604959f8d4f53ef58754f44391c69cfc87f1b97872abef63161e18c885");
+                "f6dbe0604959f8d4f53ef58754f44391c69cfc87f1b97872abef63161e18c885");
             var sig = SR25519.Sign(message1, keys);
-
             var verification1 = SR25519.Verify(message1, sig, keys.Public);
             var verification2 = SR25519.Verify(message2, sig, keys.Public);
 
