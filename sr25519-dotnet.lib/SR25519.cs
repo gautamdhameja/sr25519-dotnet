@@ -150,23 +150,13 @@ namespace sr25519_dotnet.lib
         /// <param name="signature">The message signature.</param>
         /// <param name="publicKey">The public (verification) key.</param>
         /// <returns>True/False if the verification passed or failed.</returns>
-        public static bool Verify(string message, byte[] signature, 
+        public static bool Verify(string message, byte[] signature,
             byte[] publicKey)
         {
-            bool result;
-            try
-            {
-                var bytes = Encoding.UTF8.GetBytes(message);
-                result = Bindings.Verify(
-                    signature, bytes, Convert.ToUInt64(bytes.Length), 
-                    publicKey);
-            }
-            catch (Exception)
-            {
-                return false;
-            }
-
-            return result;
+            var bytes = Encoding.UTF8.GetBytes(message);
+            return Bindings.Verify(
+                signature, bytes, Convert.ToUInt64(bytes.Length),
+                publicKey);
         }
 
         /// <summary>
@@ -179,19 +169,9 @@ namespace sr25519_dotnet.lib
         public static bool Verify(byte[] message, byte[] signature,
             byte[] publicKey)
         {
-            bool result;
-            try
-            {
-                result = Bindings.Verify(
-                    signature, message, Convert.ToUInt64(message.Length),
-                    publicKey);
-            }
-            catch (Exception)
-            {
-                return false;
-            }
-
-            return result;
+            return Bindings.Verify(
+                signature, message, Convert.ToUInt64(message.Length),
+                publicKey);
         }
     }
 }
