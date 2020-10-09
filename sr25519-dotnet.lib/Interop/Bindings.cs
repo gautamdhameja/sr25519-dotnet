@@ -105,11 +105,10 @@ namespace sr25519_dotnet.lib.Interop
         /// Sign the provided message using a Verifiable Random Function and
         /// if the result is less than param limit provide the proof.
         /// </summary>
-        /// <param name="out_and_proof_ptr"></param>
-        /// <param name="keypair_ptr"></param>
-        /// <param name="message_ptr"></param>
-        /// <param name="message_length"></param>
-        /// <param name="limit_ptr"></param>
+        /// <param name="out_and_proof_ptr">pointer to output array, where the VRF out and proof will be written</param>
+        /// <param name="keypair_ptr">byte representation of the keypair that will be used during signing</param>
+        /// <param name="message_ptr">byte array to be signed</param>
+        /// <param name="limit_ptr">byte array, must be 16 bytes long</param>
         /// <returns></returns>
         [DllImport("sr25519crust",
             CallingConvention = CallingConvention.Cdecl,
@@ -122,15 +121,15 @@ namespace sr25519_dotnet.lib.Interop
             byte[] message_ptr, ulong message_length, byte[] limit_ptr);
 
         /// <summary>
-        /// Verify a signature produced by a VRF with its original input and the corresponding proof and
-        /// check if the result of the function is less than the threshold.
+        /// Verify a signature produced by a VRF with its original input and the corresponding proof,
+        /// and check if the result of the function is less than the threshold.
         /// NOTE: If errors, is_less field of the returned structure is not meant to contain a valid value.
         /// </summary>
-        /// <param name="out_and_proof_ptr"></param>
-        /// <param name="keypair_ptr"></param>
-        /// <param name="message_ptr"></param>
-        /// <param name="message_length"></param>
-        /// <param name="limit_ptr"></param>
+        /// <param name="public_key_ptr">byte representation of the public key that was used to sign the message</param>
+        /// <param name="message_ptr">the orignal signed message</param>
+        /// <param name="output_ptr">the signature</param>
+        /// <param name="proof_ptr">the proof of the signature</param>
+        /// <param name="threshold_ptr">the threshold to be compared against</param>
         /// <returns></returns>
         [DllImport("sr25519crust",
             CallingConvention = CallingConvention.Cdecl,

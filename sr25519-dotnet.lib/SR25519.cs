@@ -195,12 +195,13 @@ namespace sr25519_dotnet.lib
         }
 
         /// <summary>
-        /// Sign the provided message using a Verifiable Random Function and
-        /// if the result is less than param threshold provide the proof.
+        /// Sign the provided message using a Verifiable Random Function (VRF)
+        /// and if the result is less than param threshold provide the proof.
         /// </summary>
         /// <param name="message">The raw bytes of the message to sign.</param>
         /// <param name="keypair">The keypair for signing.</param>
         /// <param name="threshold">Threshold (byte array, 16 bytes).</param>
+        /// <param name="result">VRF signature output & proof.</param>
         /// <returns>True if VRF signature was successful (and result below threshold)</returns>
         public static bool VrfSignIfLess(byte[] message,
             SR25519Keypair keypair, byte[] threshold, out VrfSignResult result)
@@ -225,21 +226,29 @@ namespace sr25519_dotnet.lib
                 threshold);
 
             result = new VrfSignResult(rc, vrfOutputAndProof);
-            return rc.Result == Sr25519SignatureResult.Ok;
+            return rc.Result == Sr25519SignatureResult.Ok && rc.IsLess;
         }
 
         /// <summary>
-        /// Sign the provided message using a Verifiable Random Function and
-        /// if the result is less than param threshold provide the proof.
+        /// Verify a signature produced by a VRF with its original input and the corresponding proof,
+        /// and check if the result of the function is less than the threshold.
         /// </summary>
-        /// <param name="message">The raw bytes of the message to sign.</param>
-        /// <param name="keypair">The keypair for signing.</param>
+        /// <param name="message">The raw bytes of the original input message.</param>
+        /// <param name="publicKey">The public (verification) key.</param>
+        /// <param name="output">VRF signature output (byte array, 32 bytes).</param>
+        /// <param name="proof">VRF signature proof (byte array, 64 bytes).</param>
         /// <param name="threshold">Threshold (byte array, 16 bytes).</param>
-        /// <returns>True if VRF signature was successful (and result below threshold)</returns>
+        /// <param name="result">VRF verification result.</param>
+        /// <returns>True if VRF verification was successful (with output below threshold)</returns>
         public static bool VrfVerify(byte[] message, byte[] publicKey,
             byte[] output, byte[] proof, byte[] threshold, out VrfVerifyResult result)
         {
             result = null;
+
+            if (publicKey?.Length != Constants.SR25519_PUBLIC_SIZE)
+            {
+                throw new SR25519VrfException(StringConstants.BadKeySizeMessage);
+            }
 
             if (output?.Length != Constants.SR25519_VRF_OUTPUT_SIZE)
             {

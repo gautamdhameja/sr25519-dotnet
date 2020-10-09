@@ -34,6 +34,6 @@ The native lib dependency is also provided for various platforms in the `/native
 ## To Do
 
 * ~~Update to latest version of schnorrkel when C bindings are updated.~~
-* Add bindings for VRF related functions.
+* ~~Add bindings for VRF related functions.~~
 * Automate build process.
 * Publish as a nuget package.
