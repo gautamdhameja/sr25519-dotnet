@@ -120,7 +120,7 @@ namespace sr25519_dotnet.lib
             var signature = new byte[Constants.SR25519_SIGNATURE_SIZE];
 
             Bindings.Sign(
-                signature, keypair.Public, 
+                signature, keypair.Public,
                 keypair.Secret, bytes, Convert.ToUInt64(bytes.Length));
 
             return signature;
@@ -150,7 +150,7 @@ namespace sr25519_dotnet.lib
         /// <param name="signature">The message signature.</param>
         /// <param name="publicKey">The public (verification) key.</param>
         /// <returns>True/False if the verification passed or failed.</returns>
-        public static bool Verify(string message, byte[] signature, 
+        public static bool Verify(string message, byte[] signature,
             byte[] publicKey)
         {
             bool result;
@@ -158,7 +158,7 @@ namespace sr25519_dotnet.lib
             {
                 var bytes = Encoding.UTF8.GetBytes(message);
                 result = Bindings.Verify(
-                    signature, bytes, Convert.ToUInt64(bytes.Length), 
+                    signature, bytes, Convert.ToUInt64(bytes.Length),
                     publicKey);
             }
             catch (Exception)
@@ -192,6 +192,34 @@ namespace sr25519_dotnet.lib
             }
 
             return result;
+        }
+
+        /// <summary>
+        /// Signs a message and returns the signature.
+        /// </summary>
+        /// <param name="message">The raw bytes of the message to sign.</param>
+        /// <param name="keypair">The keypair for signing.</param>
+        /// <returns>Signature as byte[]</returns>
+        public static bool VrfSignIfLess(byte[] message,
+            SR25519Keypair keypair, byte[] threshold, out VrfSignResult result)
+        {
+            result = null;
+
+            var vrfOutputAndProof = new byte[
+                Constants.SR25519_VRF_OUTPUT_SIZE +
+                Constants.SR25519_VRF_PROOF_SIZE
+            ];
+
+            var rc = Bindings.VrfSignIfLess(
+                vrfOutputAndProof,
+                keypair.GetBytes(),
+                message,
+                Convert.ToUInt64(message.Length),
+                threshold);
+
+            result = new VrfSignResult(vrfOutputAndProof);
+
+            return rc.Result == Sr25519SignatureResult.Ok;
         }
     }
 }

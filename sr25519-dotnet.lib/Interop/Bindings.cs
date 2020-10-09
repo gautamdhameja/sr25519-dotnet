@@ -100,5 +100,26 @@ namespace sr25519_dotnet.lib.Interop
         internal static extern bool Verify(
             byte[] signature_ptr, byte[] message_ptr,
             ulong message_length, byte[] public_ptr);
+
+        /// <summary>
+        /// Sign the provided message using a Verifiable Random Function and
+        /// if the result is less than \param limit provide the proofVerify a signature.
+        /// </summary>
+        /// <param name="out_and_proof_ptr"></param>
+        /// <param name="keypair_ptr"></param>
+        /// <param name="message_ptr"></param>
+        /// <param name="message_length"></param>
+        /// <param name="limit_ptr"></param>
+        /// <returns></returns>
+        [DllImport("sr25519crust",
+            CallingConvention = CallingConvention.Cdecl,
+            ExactSpelling = true,
+            EntryPoint = "sr25519_vrf_sign_if_less",
+            SetLastError = true)]
+        // [return: MarshalAs(UnmanagedType.Struct)]
+        internal static extern VrfResult VrfSignIfLess(
+            [Out] byte[] out_and_proof_ptr, byte[] keypair_ptr,
+            byte[] message_ptr, ulong message_length,
+            byte[] limit_ptr);
     }
 }
