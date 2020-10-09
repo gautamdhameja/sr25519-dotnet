@@ -1,5 +1,8 @@
+using System.Linq;
+using System.Text;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using sr25519_dotnet.lib;
+using sr25519_dotnet.lib.Models;
 
 namespace sr25519_dotnet.test
 {
@@ -104,6 +107,56 @@ namespace sr25519_dotnet.test
 
             // Assert.
             Assert.AreEqual(expectedPublic, Utils.ByteArrayToHexString(derived));
+        }
+
+        [TestMethod]
+        public void ShouldVrfSignAndVerifyMessageBytes()
+        {
+            // Arrange.
+            var message1 = "Hello, world!";
+            var message2 = "Hello, Earth!";
+
+            // Act.
+            var keys = SR25519.GenerateKeypairFromSeed(
+                 "f6dbe0604959f8d4f53ef58754f44391c69cfc87f1b97872abef63161e18c885");
+
+            var threshold = Enumerable.Repeat((byte)0xFF, 16).ToArray();
+
+            VrfSignResult signResult;
+            var signVerification = SR25519.VrfSignIfLess(
+                Encoding.UTF8.GetBytes(message1),
+                keys,
+                threshold,
+                out signResult
+            );
+            Assert.IsTrue(signVerification);
+            Assert.AreEqual(Sr25519SignatureResult.Ok, signResult.Result);
+            Assert.IsTrue(signResult.IsLess);
+
+            VrfVerifyResult verifyResult;
+            var verification1 = SR25519.VrfVerify(
+                Encoding.UTF8.GetBytes(message1),
+                keys.Public,
+                signResult.Output,
+                signResult.Proof,
+                threshold,
+                out verifyResult
+            );
+            Assert.IsTrue(verification1);
+            Assert.AreEqual(Sr25519SignatureResult.Ok, verifyResult.Result);
+            Assert.IsTrue(verifyResult.IsLess);
+
+            var verification2 = SR25519.VrfVerify(
+                Encoding.UTF8.GetBytes(message2),
+                keys.Public,
+                signResult.Output,
+                signResult.Proof,
+                threshold,
+                out verifyResult
+            );
+            Assert.IsFalse(verification2);
+            Assert.AreEqual(Sr25519SignatureResult.EquationFalse, verifyResult.Result);
+            Assert.IsFalse(verifyResult.IsLess);
         }
     }
 }
