@@ -120,7 +120,7 @@ namespace sr25519_dotnet.lib
             var signature = new byte[Constants.SR25519_SIGNATURE_SIZE];
 
             Bindings.Sign(
-                signature, keypair.Public, 
+                signature, keypair.Public,
                 keypair.Secret, bytes, Convert.ToUInt64(bytes.Length));
 
             return signature;
@@ -150,7 +150,7 @@ namespace sr25519_dotnet.lib
         /// <param name="signature">The message signature.</param>
         /// <param name="publicKey">The public (verification) key.</param>
         /// <returns>True/False if the verification passed or failed.</returns>
-        public static bool Verify(string message, byte[] signature, 
+        public static bool Verify(string message, byte[] signature,
             byte[] publicKey)
         {
             bool result;
@@ -158,7 +158,7 @@ namespace sr25519_dotnet.lib
             {
                 var bytes = Encoding.UTF8.GetBytes(message);
                 result = Bindings.Verify(
-                    signature, bytes, Convert.ToUInt64(bytes.Length), 
+                    signature, bytes, Convert.ToUInt64(bytes.Length),
                     publicKey);
             }
             catch (Exception)
@@ -192,6 +192,89 @@ namespace sr25519_dotnet.lib
             }
 
             return result;
+        }
+
+        /// <summary>
+        /// Sign the provided message using a Verifiable Random Function (VRF)
+        /// and if the result is less than param threshold provide the proof.
+        /// </summary>
+        /// <param name="message">The raw bytes of the message to sign.</param>
+        /// <param name="keypair">The keypair for signing.</param>
+        /// <param name="threshold">Threshold (byte array, 16 bytes).</param>
+        /// <param name="result">VRF signature output & proof.</param>
+        /// <returns>True if VRF signature was successful (and result below threshold)</returns>
+        public static bool VrfSignIfLess(byte[] message,
+            SR25519Keypair keypair, byte[] threshold, out VrfSignResult result)
+        {
+            result = null;
+
+            if (threshold?.Length != Constants.SR25519_VRF_THRESHOLD_SIZE)
+            {
+                throw new SR25519VrfException(StringConstants.BadVrfTresholdSizeMessage);
+            }
+
+            var vrfOutputAndProof = new byte[
+                Constants.SR25519_VRF_OUTPUT_SIZE +
+                Constants.SR25519_VRF_PROOF_SIZE
+            ];
+
+            var rc = Bindings.VrfSignIfLess(
+                vrfOutputAndProof,
+                keypair.GetBytes(),
+                message,
+                Convert.ToUInt64(message.Length),
+                threshold);
+
+            result = new VrfSignResult(rc, vrfOutputAndProof);
+            return rc.Result == Sr25519SignatureResult.Ok && rc.IsLess;
+        }
+
+        /// <summary>
+        /// Verify a signature produced by a VRF with its original input and the corresponding proof,
+        /// and check if the result of the function is less than the threshold.
+        /// </summary>
+        /// <param name="message">The raw bytes of the original input message.</param>
+        /// <param name="publicKey">The public (verification) key.</param>
+        /// <param name="output">VRF signature output (byte array, 32 bytes).</param>
+        /// <param name="proof">VRF signature proof (byte array, 64 bytes).</param>
+        /// <param name="threshold">Threshold (byte array, 16 bytes).</param>
+        /// <param name="result">VRF verification result.</param>
+        /// <returns>True if VRF verification was successful (with output below threshold)</returns>
+        public static bool VrfVerify(byte[] message, byte[] publicKey,
+            byte[] output, byte[] proof, byte[] threshold, out VrfVerifyResult result)
+        {
+            result = null;
+
+            if (publicKey?.Length != Constants.SR25519_PUBLIC_SIZE)
+            {
+                throw new SR25519VrfException(StringConstants.BadKeySizeMessage);
+            }
+
+            if (output?.Length != Constants.SR25519_VRF_OUTPUT_SIZE)
+            {
+                throw new SR25519VrfException(StringConstants.BadVrfOutputSizeMessage);
+            }
+
+            if (proof?.Length != Constants.SR25519_VRF_PROOF_SIZE)
+            {
+                throw new SR25519VrfException(StringConstants.BadVrfProofSizeMessage);
+            }
+
+            if (threshold?.Length != Constants.SR25519_VRF_THRESHOLD_SIZE)
+            {
+                throw new SR25519VrfException(StringConstants.BadVrfTresholdSizeMessage);
+            }
+
+            var rc = Bindings.VrfVerify(
+                publicKey,
+                message,
+                Convert.ToUInt64(message.Length),
+                output,
+                proof,
+                threshold);
+
+            result = new VrfVerifyResult(rc);
+            return rc.Result == Sr25519SignatureResult.Ok;
         }
     }
 }

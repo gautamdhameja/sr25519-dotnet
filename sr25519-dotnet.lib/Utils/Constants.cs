@@ -31,5 +31,25 @@
         /// Size of chaincode in bytes
         /// </summary>
         public const int SR25519_CHAINCODE_SIZE = 32;
+
+        /// <summary>
+        /// Size of VRF output in bytes
+        /// </summary>
+        public const int SR25519_VRF_OUTPUT_SIZE = 32;
+
+        /// <summary>
+        /// Size of VRF proof in bytes
+        /// </summary>
+        public const int SR25519_VRF_PROOF_SIZE = 64;
+
+        /// <summary>
+        /// Size of VRF raw output in bytes
+        /// </summary>
+        public const int SR25519_VRF_RAW_OUTPUT_SIZE = 16;
+
+        /// <summary>
+        /// Size of VRF limit in bytes
+        /// </summary>
+        public const int SR25519_VRF_THRESHOLD_SIZE = 16;
     }
 }
